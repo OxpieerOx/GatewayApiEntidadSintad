@@ -1,0 +1,33 @@
+server:
+  port: 5000
+
+jwt:
+  secret: Key#SuperSecret$Sintad#Microservices#956557298
+
+spring:
+  application:
+    name: appgateway
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: PruebaTecnicaSeguridad
+          uri: http://localhost:100
+          predicates:
+            - Path=/security/**
+          filters:
+            - StripPrefix=1
+        - id: PruebaTecnica
+          uri: http://localhost:8010
+          predicates:
+            - Path=/mantenedor/**
+          filters:
+            - StripPrefix=1
+            - JwtAuthenticationFilter
